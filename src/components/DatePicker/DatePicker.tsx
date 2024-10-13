@@ -6,36 +6,47 @@ import React, {
   useState
 } from 'react';
 import './datepicker.css';
-import useOutsideClick from '../../hooks/useOusideClick';
+import { isValidDate } from '../../utils/dates';
+//import useOutsideClick from '../../hooks/useOusideClick';
 
 interface DatePickerProps {
   id?: string | undefined;
   onChange?: (e: { target: HTMLInputElement }) => void | undefined;
   value?: string;
+  maxDateValue?: string;
   placeholder?: string;
   name?: string;
 }
 
-type Tab = 'day' | 'month' | 'year';
+type Tab = 'day' | 'year';
 
 const DatePicker: React.FC<DatePickerProps> = ({
   id,
   onChange,
   value = '',
+  maxDateValue = '',
   placeholder,
   name
 }) => {
   // gets the today date time object
   const now: Date = useMemo(() => new Date(), []);
+  const maxDate = useMemo(
+    () =>
+      maxDateValue && isValidDate(maxDateValue) ? new Date(maxDateValue) : null,
+    [maxDateValue]
+  );
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDateTemporary, setSelectedDateTemporary] =
+    useState<Date | null>(null);
+  //Jan - Dec: 0 - 11
   const [selectedMonth, setSelectedMonth] = useState<number>(now.getMonth());
   const [selectedYear, setSelectedYear] = useState<number>(now.getFullYear());
 
   // state needed to display the day view, an array of the month weeks containing an array of week dates
   const [displayedWeeks, setDisplayedWeeks] = useState<Date[][]>([]);
   // state to define if datepicker is opened or not
-  const [opened, setOpened] = useState<boolean>(false);
+  const [opened, setOpened] = useState<boolean>(true);
   // state that tells wich tab is active : day, month, years
   const [selectionTab, setSelectionTab] = useState<Tab>('day');
   // years array needed for the years view
@@ -43,8 +54,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
   // state that tells the component to call the onchange function
   const [triggerChange, setTriggerChange] = useState<boolean>(false);
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const monthNames = [
+  const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const MONTH_NAMES = [
     'January',
     'Febuary',
     'March',
@@ -64,6 +75,37 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const datepickerRef = useRef<HTMLDivElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
 
+  const isDisabledNextMonth = useMemo(
+    () =>
+      maxDate &&
+      (maxDate.getFullYear() < selectedYear ||
+        (maxDate.getFullYear() === selectedYear &&
+          maxDate.getMonth() <= selectedMonth))
+        ? true
+        : false,
+    [maxDate, selectedMonth, selectedYear]
+  );
+
+  const isDisabledDate = useCallback(
+    (date: Date): boolean => {
+      if (maxDate) {
+        if (
+          maxDate.getFullYear() < date.getFullYear() ||
+          (maxDate.getFullYear() === date.getFullYear() &&
+            maxDate.getMonth() < date.getMonth()) ||
+          (maxDate.getFullYear() === date.getFullYear() &&
+            maxDate.getMonth() === date.getMonth() &&
+            maxDate.getDate() < date.getDate())
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    [maxDate]
+  );
+
   const closeAndReset = useCallback(() => {
     setOpened(false);
     setSelectionTab('day');
@@ -73,6 +115,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       : now.getFullYear();
     setSelectedMonth(resetMonth);
     setSelectedYear(resetYear);
+    setSelectedDateTemporary(selectedDate);
   }, [now, selectedDate]);
 
   // function that returns a string reprensenting the Date object
@@ -87,10 +130,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
   //if a value prop is passed to the component, update the selecterdDate state
   useEffect(() => {
-    if (!value) {
+    if (!value || !isValidDate(value)) {
       setSelectedDate(null);
     } else {
-      new Date(value);
+      const initialDate = new Date(value);
+      if (initialDate) {
+        setSelectedDate(initialDate);
+        setSelectedMonth(initialDate.getMonth());
+        setSelectedYear(initialDate.getFullYear());
+      }
     }
   }, [value]);
 
@@ -103,9 +151,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }, [triggerChange, onChange]);
 
   //use outside click to close the date picker if user clicks outside when opened
-  useOutsideClick(datepickerRef, closeAndReset, opened);
+  //useOutsideClick(datepickerRef, closeAndReset, opened);
 
-  //if user change the selectedYear, then udate the years array that is displayed on year tab view
+  //if user change the selectedYear, then update the years array that is displayed on year tab view
   useEffect(() => {
     const years: number[] = [];
     for (let y = selectedYear - 10; y < selectedYear + 10; y++) {
@@ -126,7 +174,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       selectedMonth,
       1
     );
-    //get the day number of the week of the first date of the month
+    //get the day number of the week of the first date of the month: Sunday - Saturday: 0 - 6
     const currentMonthFirstDay: number = currentMonthFirstDate.getDay();
     // get the current month length
     const currentMonthLastDate: number = getMonthLength(
@@ -138,15 +186,19 @@ const DatePicker: React.FC<DatePickerProps> = ({
     //determine if 6 or 5 weeks have to be displayed for this month
     const numberOfWeeksToDisplay: number =
       currentMonthFirstDay + currentMonthLastDate > 35 ? 6 : 5;
+    //calculate to list the dates of each week row it starts from dayStartPosition -> end date of the week row is dayStartPosition + 7
     for (let week = 0; week < numberOfWeeksToDisplay; week++) {
       const weekArray: Date[] = [];
       const dayStartPosition: number = week * 7 - currentMonthFirstDay;
+
       for (let day = 1; day <= 7; day++) {
         const dayPosition = dayStartPosition + day;
         weekArray.push(new Date(selectedYear, selectedMonth, dayPosition));
       }
       calendarArray.push(weekArray);
     }
+    console.log(calendarArray);
+
     setDisplayedWeeks(calendarArray);
   }, [selectedYear, selectedMonth]);
 
@@ -155,19 +207,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
     setSelectedYear(value);
   };
 
-  const onMonthChange = (index: number) => {
-    setSelectionTab('day');
-    setSelectedMonth(index);
-  };
-
   const onDayClick = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as Element;
     const dateElement = target.closest('.' + prefix + '__day');
 
     if (dateElement && dateElement instanceof HTMLElement) {
-      setSelectedDate(new Date(dateElement.id));
-      setOpened(false);
-      setTriggerChange(true);
+      setSelectedDateTemporary(new Date(dateElement.id));
     }
   };
 
@@ -181,11 +226,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
     } else {
       setOpened(true);
     }
-  };
-
-  const onTodayClick = () => {
-    setSelectedMonth(now.getMonth());
-    setSelectedYear(now.getFullYear());
   };
 
   const onNavClick = (
@@ -250,6 +290,17 @@ const DatePicker: React.FC<DatePickerProps> = ({
     setSelectionTab(tab);
   };
 
+  const onOkayClick = () => {
+    if (selectedDateTemporary) {
+      setSelectedDate(selectedDateTemporary);
+      setSelectedMonth(selectedDateTemporary.getMonth());
+      setSelectedYear(selectedDateTemporary.getFullYear());
+    }
+    setOpened(false);
+    setSelectionTab('day');
+    setTriggerChange(true);
+  };
+
   return (
     <div className={prefix}>
       <div
@@ -266,13 +317,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
           placeholder={placeholder}
           name={name}
         />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          className="calendar-icon"
-        >
-          <path d="M12,14a1,1,0,1,0-1-1A1,1,0,0,0,12,14Zm5,0a1,1,0,1,0-1-1A1,1,0,0,0,17,14Zm-5,4a1,1,0,1,0-1-1A1,1,0,0,0,12,18Zm5,0a1,1,0,1,0-1-1A1,1,0,0,0,17,18ZM7,14a1,1,0,1,0-1-1A1,1,0,0,0,7,14ZM19,4H18V3a1,1,0,0,0-2,0V4H8V3A1,1,0,0,0,6,3V4H5A3,3,0,0,0,2,7V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V7A3,3,0,0,0,19,4Zm1,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V10H20ZM20,8H4V7A1,1,0,0,1,5,6H19a1,1,0,0,1,1,1ZM7,18a1,1,0,1,0-1-1A1,1,0,0,0,7,18Z" />
-        </svg>
       </div>
 
       {opened && (
@@ -280,7 +324,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           {selectionTab === 'day' && (
             <div>
               <div className={prefix + '__navigation'}>
-                <div
+                <button
                   className={prefix + '__navigation-prev'}
                   onClick={(e) => {
                     onNavClick(e, 'prev');
@@ -297,26 +341,20 @@ const DatePicker: React.FC<DatePickerProps> = ({
                       d="m20.5 11.5-6 6-6-6"
                     />
                   </svg>
-                </div>
-                <button
-                  onClick={(e) => {
-                    changeSelectionTab(e, 'month');
-                  }}
-                >
-                  {monthNames[selectedMonth]}
                 </button>
                 <button
                   onClick={(e) => {
                     changeSelectionTab(e, 'year');
                   }}
                 >
-                  {selectedYear}
+                  {MONTH_NAMES[selectedMonth]} {selectedYear}
                 </button>
-                <div
+                <button
                   className={prefix + '__navigation-next'}
                   onClick={(e) => {
                     onNavClick(e, 'next');
                   }}
+                  disabled={isDisabledNextMonth}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
                     <path
@@ -329,13 +367,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
                       d="m20.5 11.5-6 6-6-6"
                     />
                   </svg>
-                </div>
+                </button>
               </div>
 
               <table className={prefix + '__body'}>
                 <thead className={prefix + '__header'}>
                   <tr>
-                    {weekDays.map((day, index) => {
+                    {WEEK_DAYS.map((day, index) => {
                       return <th key={index + day}>{day}</th>;
                     })}
                   </tr>
@@ -353,19 +391,28 @@ const DatePicker: React.FC<DatePickerProps> = ({
                             selectedDate &&
                             date.toDateString() === selectedDate.toDateString()
                           ) {
+                            className += ' current';
+                          }
+                          if (
+                            selectedDateTemporary &&
+                            date.toDateString() ===
+                              selectedDateTemporary.toDateString()
+                          ) {
                             className += ' selected';
                           }
                           if (date.toDateString() === now.toDateString()) {
                             className += ' today';
                           }
                           return (
-                            <td
-                              key={date.toString() + index}
-                              className={className}
-                              id={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
-                              onClick={onDayClick}
-                            >
-                              {date.getDate()}
+                            <td key={date.toString() + index}>
+                              <button
+                                className={className}
+                                id={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
+                                onClick={onDayClick}
+                                disabled={isDisabledDate(date)}
+                              >
+                                {date.getDate()}
+                              </button>
                             </td>
                           );
                         })}
@@ -374,32 +421,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
                   })}
                 </tbody>
               </table>
-              <span className={prefix + '__today'} onClick={onTodayClick}>
-                Today
-              </span>
-            </div>
-          )}
-          {selectionTab === 'month' && (
-            <div className={prefix + '__month-container'}>
-              {monthNames.map((month, index) => {
-                return (
-                  <div
-                    className={`${prefix}__month${selectedMonth === index ? ' selected' : ''}`}
-                    key={month + index}
-                    onClick={() => {
-                      onMonthChange(index);
-                    }}
-                  >
-                    {month}
-                  </div>
-                );
-              })}
             </div>
           )}
           {selectionTab === 'year' && (
             <div>
               <div className={prefix + '__navigation'}>
-                <div
+                <button
                   className={prefix + '__navigation-prev'}
                   onClick={(e) => {
                     onNavClick(e, 'prev', 'year');
@@ -416,11 +443,11 @@ const DatePicker: React.FC<DatePickerProps> = ({
                       d="m20.5 11.5-6 6-6-6"
                     />
                   </svg>
-                </div>
+                </button>
                 <span>
                   {yearsArray[0] + ' - ' + yearsArray[yearsArray.length - 1]}
                 </span>
-                <div
+                <button
                   className={prefix + '__navigation-next'}
                   onClick={(e) => {
                     onNavClick(e, 'next', 'year');
@@ -437,25 +464,36 @@ const DatePicker: React.FC<DatePickerProps> = ({
                       d="m20.5 11.5-6 6-6-6"
                     />
                   </svg>
-                </div>
+                </button>
               </div>
               <div className={prefix + '__year-container'}>
                 {yearsArray.map((year, index) => {
                   return (
-                    <div
+                    <button
                       className={`${prefix}__year${selectedYear === year ? ' selected' : ''}`}
                       key={year + index}
                       onClick={() => {
                         onYearChange(year);
                       }}
+                      disabled={
+                        maxDate && maxDate.getFullYear() < year ? true : false
+                      }
                     >
                       {year}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
             </div>
           )}
+          <div>
+            <button onClick={closeAndReset}>
+              <span>Cancel</span>
+            </button>
+            <button onClick={onOkayClick}>
+              <span>Ok</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

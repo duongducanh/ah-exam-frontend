@@ -1,13 +1,18 @@
 import React from 'react';
-//import Calendar from '../../components/Calendar';
 import DatePicker from '../../components/DatePicker';
 
 const Home = () => {
+  const now = new Date();
+
   return (
     <>
-      {/* <Calendar /> */}
-      <br />
-      <DatePicker />
+      <DatePicker
+        name="date-picker"
+        id="date-picker"
+        placeholder="mm/dd/yyy"
+        maxDateValue={now.toISOString()}
+        //value="12/18/2024"
+      />
     </>
   );
 };

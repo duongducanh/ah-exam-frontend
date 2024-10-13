@@ -13,7 +13,6 @@
   z-index: 1;
   width: 300px;
   box-sizing: border-box;
-  height: 21em;
   min-width: 300px;
 }
 .SG-datepicker__today {
@@ -114,6 +113,9 @@
 .SG-datepicker__day:hover {
   background-color: #3374b8;
   color: white;
+}
+.SG-datepicker__day.current {
+  border: 1px solid #003aa6;
 }
 .SG-datepicker__day.selected {
   background-color: #003aa6;

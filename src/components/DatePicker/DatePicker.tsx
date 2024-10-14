@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react';
 import './datepicker.css';
-import { isValidDate } from '../../utils/dates';
+import { isValidDate } from '../../utils';
 //import useOutsideClick from '../../hooks/useOusideClick';
 
 interface DatePickerProps {
@@ -444,14 +444,18 @@ const DatePicker: React.FC<DatePickerProps> = ({
                     />
                   </svg>
                 </button>
-                <span>
-                  {yearsArray[0] + ' - ' + yearsArray[yearsArray.length - 1]}
-                </span>
+                <span>{selectedYear}</span>
                 <button
                   className={prefix + '__navigation-next'}
                   onClick={(e) => {
                     onNavClick(e, 'next', 'year');
                   }}
+                  disabled={
+                    maxDate &&
+                    yearsArray[yearsArray.length - 1] > maxDate.getFullYear()
+                      ? true
+                      : false
+                  }
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
                     <path

@@ -17,6 +17,10 @@
         "additionalHooks": "(useMyCustomHook|useMyOtherCustomHook)"
       }
     ],
-    "@typescript-eslint/no-unused-vars": "error"
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-console": [
+      "warn",
+      { "allow": ["clear", "info", "error", "dir", "trace", "warn"] }
+    ]
   }
 }

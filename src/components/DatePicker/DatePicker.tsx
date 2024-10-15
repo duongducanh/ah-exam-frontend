@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import './datepicker.css';
 import { isValidDate } from '../../utils';
-//import useOutsideClick from '../../hooks/useOusideClick';
+import useOutsideClick from '../../hooks/useOusideClick';
 
 interface DatePickerProps {
   id?: string | undefined;
@@ -46,7 +46,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   // state needed to display the day view, an array of the month weeks containing an array of week dates
   const [displayedWeeks, setDisplayedWeeks] = useState<Date[][]>([]);
   // state to define if datepicker is opened or not
-  const [opened, setOpened] = useState<boolean>(true);
+  const [opened, setOpened] = useState<boolean>(false);
   // state that tells wich tab is active : day, month, years
   const [selectionTab, setSelectionTab] = useState<Tab>('day');
   // years array needed for the years view
@@ -151,7 +151,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }, [triggerChange, onChange]);
 
   //use outside click to close the date picker if user clicks outside when opened
-  //useOutsideClick(datepickerRef, closeAndReset, opened);
+  useOutsideClick(datepickerRef, closeAndReset, opened);
 
   //if user change the selectedYear, then update the years array that is displayed on year tab view
   useEffect(() => {
@@ -197,7 +197,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
       }
       calendarArray.push(weekArray);
     }
-    console.log(calendarArray);
 
     setDisplayedWeeks(calendarArray);
   }, [selectedYear, selectedMonth]);

@@ -8,6 +8,7 @@ import React, {
 import './datepicker.css';
 import { isValidDate } from '../../utils';
 import useOutsideClick from '../../hooks/useOusideClick';
+import Input from '../Input';
 
 interface DatePickerProps {
   id?: string | undefined;
@@ -15,7 +16,8 @@ interface DatePickerProps {
   value?: string;
   maxDateValue?: string;
   placeholder?: string;
-  name?: string;
+  name: string;
+  label?: string;
 }
 
 type Tab = 'day' | 'year';
@@ -26,7 +28,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
   value = '',
   maxDateValue = '',
   placeholder,
-  name
+  name,
+  label
 }) => {
   // gets the today date time object
   const now: Date = useMemo(() => new Date(), []);
@@ -219,7 +222,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
   ) => {
     e.preventDefault();
-    e.stopPropagation();
+    //e.stopPropagation();
     if (opened) {
       closeAndReset();
     } else {
@@ -307,7 +310,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
         onKeyDown={onInputClick}
         onClick={onInputClick}
       >
-        <input
+        <Input
           type="text"
           id={id}
           value={selectedDate ? formatDate(selectedDate) : ''}
@@ -315,6 +318,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           ref={dateInputRef}
           placeholder={placeholder}
           name={name}
+          label={label}
         />
       </div>
 

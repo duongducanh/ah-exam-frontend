@@ -63,11 +63,11 @@ const PasswordCheckList: React.FC<PasswordCheckListProps> = ({
   );
 
   return (
-    <ul>
+    <ul className="text-[14px] leading-[21px] tracking-[.25px]">
       {enabledRules.map((rule) => {
         const { message, valid } = ruleDefinitions[rule];
         return (
-          <li key={rule}>
+          <li key={rule} className="flex items-center gap-3 py-1 min-h-[40px]">
             <span>{valid ? <CheckValid /> : <CheckInvalid />}</span>
             <span>{message}</span>
           </li>

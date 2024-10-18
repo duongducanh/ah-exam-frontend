@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Input from '../Input';
 import PasswordCheckList from './PasswordCheckList';
 import useOutsideClick from '../../hooks/useOusideClick';
@@ -13,29 +13,33 @@ const Password = () => {
     setPassword(event.target.value);
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpened(false);
-  };
+  }, []);
 
   useOutsideClick(checkListRef, handleClose, opened);
 
   return (
-    <>
+    <div className="relative inline-block mb-10">
       <Input
         name="password"
         id="password"
         label="Password"
         type="password"
+        placeholder="Password"
         onChange={handleSetPassword}
         onClick={() => setOpened(true)}
       />
       {opened && (
-        <div ref={checkListRef}>
+        <div
+          ref={checkListRef}
+          className="absolute z-10 bg-grey-800 rounded-lg py-2 px-3.5 w-full mt-5"
+        >
           <PasswordCheckList
             value={password}
             rules={[
-              'lowercase',
               'uppercase',
+              'lowercase',
               'number',
               'specialChar',
               'minLength'
@@ -44,7 +48,7 @@ const Password = () => {
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

@@ -8,7 +8,6 @@ const Home = () => {
   return (
     <>
       <Password />
-      <br />
       <DatePicker
         name="date-picker"
         id="date-picker"

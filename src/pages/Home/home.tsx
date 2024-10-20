@@ -12,7 +12,7 @@ const Home = () => {
         name="date-picker"
         id="date-picker"
         label="Birthday"
-        placeholder="mm/dd/yyy"
+        placeholder="mm/dd/yyyy"
         maxDateValue={now.toISOString()}
         //value="12/18/2024"
       />

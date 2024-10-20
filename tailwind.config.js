@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        ubuntu: ['Ubuntu', 'sans-serif']
+        ubuntu: ['Ubuntu', 'sans-serif'],
+        inter: ['Inter', 'sans-serif']
       },
       colors: {
         primary: {
@@ -17,8 +18,13 @@ module.exports = {
         grey: {
           800: '#242424',
           dark: '#181818',
-          500: '#929292'
+          darker: '#080808',
+          500: '#929292',
+          light: '#1B1B1B'
         }
+      },
+      boxShadow: {
+        dark: '4px 4px 20px 0px #0000004D'
       }
     }
   },

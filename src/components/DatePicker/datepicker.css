@@ -36,33 +36,7 @@
 .SG-datepicker__navigation-prev {
   cursor: pointer;
 }
-.SG-datepicker__navigation-prev svg {
-  display: block;
-  width: 30px;
-  height: 30px;
-  transform: rotate(90deg);
-}
 .SG-datepicker__navigation-next {
-  cursor: pointer;
-}
-.SG-datepicker__navigation-next svg {
-  display: block;
-  width: 30px;
-  height: 30px;
-  transform: rotate(-90deg);
-}
-.SG-datepicker__input-container {
-  position: relative;
-  display: inline-block;
-  z-index: 0;
-}
-.SG-datepicker__input-container input {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px #666 solid;
-  margin: 0;
-  display: block;
-  box-sizing: border-box;
   cursor: pointer;
 }
 .SG-datepicker__input-container .calendar-icon {
@@ -90,7 +64,7 @@
   cursor: default;
 }
 .SG-datepicker__day {
-  width: 14.2857142857%;
+  width: 100%;
   box-sizing: border-box;
   background: #fff;
   color: #666;
@@ -157,16 +131,19 @@
   background-color: #003aa6;
   color: white;
 }
-.SG-datepicker button {
-  background-color: #fff;
-  color: #666;
-  border: #ddd 1px solid;
-  border-radius: 5px;
-  height: 2.5em;
-  padding: 0 1em;
-  cursor: pointer;
+
+.nav {
+  @apply flex justify-between items-center mb-2;
 }
-.SG-datepicker button:hover {
-  background-color: #3374b8;
-  color: white;
+
+.nav-btn {
+  @apply w-[48px] h-[48px] flex justify-center items-center disabled:opacity-[.5];
+}
+
+.nav-year-btn {
+  @apply -mt-1;
+}
+
+.confirm-btn {
+  @apply text-[14px] leading-[24px] font-semibold px-[17px] py-2;
 }

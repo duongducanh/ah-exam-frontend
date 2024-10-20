@@ -7,8 +7,10 @@ import React, {
 } from 'react';
 import './datepicker.css';
 import { isValidDate } from '../../utils';
-import useOutsideClick from '../../hooks/useOusideClick';
+//import useOutsideClick from '../../hooks/useOusideClick';
 import Input from '../Input';
+import ArrowLeft from '../Icons/ArrowLeft';
+import ArrowRight from '../Icons/ArrowRight';
 
 interface DatePickerProps {
   id?: string | undefined;
@@ -57,7 +59,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   // state that tells the component to call the onchange function
   const [triggerChange, setTriggerChange] = useState<boolean>(false);
 
-  const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
   const MONTH_NAMES = [
     'January',
     'Febuary',
@@ -72,8 +74,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
     'November',
     'December'
   ];
-  // className prefix for this component
-  const prefix = 'SG-datepicker';
 
   const datepickerRef = useRef<HTMLDivElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -154,7 +154,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }, [triggerChange, onChange]);
 
   //use outside click to close the date picker if user clicks outside when opened
-  useOutsideClick(datepickerRef, closeAndReset, opened);
+  //useOutsideClick(datepickerRef, closeAndReset, opened);
 
   //if user change the selectedYear, then update the years array that is displayed on year tab view
   useEffect(() => {
@@ -211,7 +211,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
   const onDayClick = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as Element;
-    const dateElement = target.closest('.' + prefix + '__day');
+    const dateElement = target.closest('button');
 
     if (dateElement && dateElement instanceof HTMLElement) {
       setSelectedDateTemporary(new Date(dateElement.id));
@@ -304,9 +304,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   return (
-    <div className={prefix}>
+    <div className="relative">
       <div
-        className={prefix + '__input-container'}
+        className="inline-block"
         onKeyDown={onInputClick}
         onClick={onInputClick}
       >
@@ -319,33 +319,34 @@ const DatePicker: React.FC<DatePickerProps> = ({
           placeholder={placeholder}
           name={name}
           label={label}
+          inputClassName="cursor-pointer"
         />
       </div>
 
       {opened && (
-        <div className={prefix + '__calendar-container'} ref={datepickerRef}>
+        <div
+          ref={datepickerRef}
+          className="font-inter absolute bg-grey-light w-[320px] rounded-[10px] shadow-dark mt-3.5 pt-[17px] pb-4"
+        >
+          <div className="px-6 mb-1">Text</div>
+          <h4 className="px-6 text-[32px] leading-[44px] font-bold tracking-[1px] mb-[15px]">
+            {now.toLocaleString('default', { month: 'short' })}
+            {', '}
+            {now.getFullYear()}
+          </h4>
           {selectionTab === 'day' && (
             <div>
-              <div className={prefix + '__navigation'}>
+              <div className="nav">
                 <button
-                  className={prefix + '__navigation-prev'}
+                  className="nav-btn"
                   onClick={(e) => {
                     onNavClick(e, 'prev');
                   }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
-                    <path
-                      fill="none"
-                      stroke="#000"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeMiterlimit="10"
-                      strokeWidth="2"
-                      d="m20.5 11.5-6 6-6-6"
-                    />
-                  </svg>
+                  <ArrowLeft />
                 </button>
                 <button
+                  className="nav-year-btn"
                   onClick={(e) => {
                     changeSelectionTab(e, 'year');
                   }}
@@ -353,103 +354,104 @@ const DatePicker: React.FC<DatePickerProps> = ({
                   {MONTH_NAMES[selectedMonth]} {selectedYear}
                 </button>
                 <button
-                  className={prefix + '__navigation-next'}
+                  className="nav-btn"
                   onClick={(e) => {
                     onNavClick(e, 'next');
                   }}
                   disabled={isDisabledNextMonth}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
-                    <path
-                      fill="none"
-                      stroke="#000"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeMiterlimit="10"
-                      strokeWidth="2"
-                      d="m20.5 11.5-6 6-6-6"
-                    />
-                  </svg>
+                  <ArrowRight />
                 </button>
               </div>
 
-              <table className={prefix + '__body'}>
-                <thead className={prefix + '__header'}>
-                  <tr>
-                    {WEEK_DAYS.map((day, index) => {
-                      return <th key={index + day}>{day}</th>;
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedWeeks.map((week, index) => {
-                    return (
-                      <tr key={week.toString() + index}>
-                        {week.map((date, index) => {
-                          let className = prefix + '__day';
-                          if (date.getMonth() !== selectedMonth) {
-                            className += ' off-month';
-                          }
-                          if (
-                            selectedDate &&
-                            date.toDateString() === selectedDate.toDateString()
-                          ) {
-                            className += ' current';
-                          }
-                          if (
-                            selectedDateTemporary &&
-                            date.toDateString() ===
-                              selectedDateTemporary.toDateString()
-                          ) {
-                            className += ' selected';
-                          }
-                          if (date.toDateString() === now.toDateString()) {
-                            className += ' today';
-                          }
-                          return (
-                            <td key={date.toString() + index}>
-                              <button
-                                className={className}
-                                id={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
-                                onClick={onDayClick}
-                                disabled={isDisabledDate(date)}
+              <div className="px-[13px]">
+                <table className="w-full text-center">
+                  <thead>
+                    <tr>
+                      {WEEK_DAYS.map((day, index) => {
+                        return (
+                          <th
+                            key={index + day}
+                            className="text-[11px] leading-[13px] text-grey-500 font-normal pb-[12px]"
+                          >
+                            {day}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displayedWeeks.map((week, index) => {
+                      return (
+                        <tr key={week.toString() + index}>
+                          {week.map((date, index) => {
+                            let className =
+                              'text-[14px] leading-[20.02px] tracking-[.15px] text-white w-[35px] h-[35px] border rounded-full hover:enabled:border-white hover:enabled:bg-white hover:enabled:text-grey-darker';
+                            let classNameBorder = ' border-transparent';
+                            //off-month
+                            if (date.getMonth() !== selectedMonth) {
+                              className += ' opacity-[.5]';
+                            }
+                            //current day
+                            if (
+                              selectedDate &&
+                              date.toDateString() ===
+                                selectedDate.toDateString()
+                            ) {
+                              classNameBorder = ' border-primary';
+                            }
+                            //selected day
+                            if (
+                              selectedDateTemporary &&
+                              date.toDateString() ===
+                                selectedDateTemporary.toDateString()
+                            ) {
+                              className += ' bg-primary';
+                              classNameBorder = ' border-primary';
+                            }
+                            //today
+                            if (date.toDateString() === now.toDateString()) {
+                              className += ' today';
+                            }
+                            className += classNameBorder;
+                            return (
+                              <td
+                                key={date.toString() + index}
+                                className="pb-0"
                               >
-                                {date.getDate()}
-                              </button>
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                                <button
+                                  className={className}
+                                  id={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
+                                  onClick={onDayClick}
+                                  disabled={isDisabledDate(date)}
+                                >
+                                  {date.getDate()}
+                                </button>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
           {selectionTab === 'year' && (
-            <div>
-              <div className={prefix + '__navigation'}>
+            <div className="mb-[27px]">
+              <div className="nav">
                 <button
-                  className={prefix + '__navigation-prev'}
+                  className="nav-btn"
                   onClick={(e) => {
                     onNavClick(e, 'prev', 'year');
                   }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
-                    <path
-                      fill="none"
-                      stroke="#000"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeMiterlimit="10"
-                      strokeWidth="2"
-                      d="m20.5 11.5-6 6-6-6"
-                    />
-                  </svg>
+                  <ArrowLeft />
                 </button>
-                <span>{selectedYear}</span>
+                <span className="-mt-[9px]">{selectedYear}</span>
                 <button
-                  className={prefix + '__navigation-next'}
+                  className="nav-btn"
                   onClick={(e) => {
                     onNavClick(e, 'next', 'year');
                   }}
@@ -460,24 +462,17 @@ const DatePicker: React.FC<DatePickerProps> = ({
                       : false
                   }
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29">
-                    <path
-                      fill="none"
-                      stroke="#000"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeMiterlimit="10"
-                      strokeWidth="2"
-                      d="m20.5 11.5-6 6-6-6"
-                    />
-                  </svg>
+                  <ArrowRight />
                 </button>
               </div>
-              <div className={prefix + '__year-container'}>
+              <div className="px-[24px] grid grid-cols-[repeat(4,minmax(0,61px))] gap-x-[9px] gap-y-6 mt-[17px]">
                 {yearsArray.map((year, index) => {
+                  const classNameSelected =
+                    selectedYear === year ? 'bg-primary rounded-[2px]' : '';
+
                   return (
                     <button
-                      className={`${prefix}__year${selectedYear === year ? ' selected' : ''}`}
+                      className={`flex items-center justify-center h-[24px] hover:enabled:bg-white hover:enabled:text-grey-dark ${classNameSelected}`}
                       key={year + index}
                       onClick={() => {
                         onYearChange(year);
@@ -493,11 +488,11 @@ const DatePicker: React.FC<DatePickerProps> = ({
               </div>
             </div>
           )}
-          <div>
-            <button onClick={closeAndReset}>
+          <div className="flex justify-end gap-x-[38px] px-[28px] mt-[11px]">
+            <button className="confirm-btn" onClick={closeAndReset}>
               <span>Cancel</span>
             </button>
-            <button onClick={onOkayClick}>
+            <button className="confirm-btn" onClick={onOkayClick}>
               <span>Ok</span>
             </button>
           </div>

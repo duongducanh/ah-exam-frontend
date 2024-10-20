@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @layer base {
   html {
@@ -25,5 +26,9 @@
   select {
     @apply h-[58px] text-base border-[3px] border-white-50 rounded-lg px-[9px] pt-[16px] pb-[12px] bg-grey-dark placeholder:text-white-50 placeholder:tracking-[.15px] 
         outline-0 tracking-[.15px] hover:border-white focus:border-primary;
+  }
+
+  button {
+    @apply disabled:cursor-not-allowed;
   }
 }

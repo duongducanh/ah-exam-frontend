@@ -21,7 +21,6 @@ const Home = () => {
         placeholder="mm/dd/yyyy"
         maxDateValue={now.toISOString()}
         value="12/18/2024"
-        onChange={onchangeCallback}
       />
     </>
   );
@@ -36,7 +35,6 @@ const Home = () => {
 **_label_** : optional\
 **_maxDateValue_** : optional - set the max date value of the calendar\
 **_value_** : optional - set the value of the datepicker input\
-**_onChange_** : optional - a callback function that takes as argument {target}\
 
 ## Add rules validation to the PasswordCheckList component:
 

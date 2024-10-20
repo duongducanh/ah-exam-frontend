@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import './datepicker.css';
 import { isValidDate } from '../../utils';
-//import useOutsideClick from '../../hooks/useOusideClick';
+import useOutsideClick from '../../hooks/useOusideClick';
 import Input from '../Input';
 import ArrowLeft from '../Icons/ArrowLeft';
 import ArrowRight from '../Icons/ArrowRight';
@@ -154,7 +154,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }, [triggerChange, onChange]);
 
   //use outside click to close the date picker if user clicks outside when opened
-  //useOutsideClick(datepickerRef, closeAndReset, opened);
+  useOutsideClick(datepickerRef, closeAndReset, opened);
 
   //if user change the selectedYear, then update the years array that is displayed on year tab view
   useEffect(() => {

@@ -3,7 +3,7 @@ import Main from './components/Main';
 
 function App() {
   return (
-    <div className="p-[70px]">
+    <div className="p-[15px] md:p-[70px]">
       <Main />
     </div>
   );

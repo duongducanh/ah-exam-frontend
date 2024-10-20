@@ -7,6 +7,9 @@ const Home = () => {
 
   return (
     <>
+      <h1 className="mb-12 text-2xl font-semibold text-center">
+        UI/UX Components: Exam 1
+      </h1>
       <Password />
       <DatePicker
         name="date-picker"

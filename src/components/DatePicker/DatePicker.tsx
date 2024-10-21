@@ -421,7 +421,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                               >
                                 <button
                                   className={className}
-                                  id={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
+                                  id={`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`}
                                   onClick={onDayClick}
                                   disabled={isDisabledDate(date)}
                                 >

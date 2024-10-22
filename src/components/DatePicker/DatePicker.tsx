@@ -329,7 +329,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           className="font-inter absolute bg-grey-light w-[320px] rounded-[10px] shadow-dark mt-3.5 pt-[17px] pb-4"
         >
           <div className="px-6 mb-1">Text</div>
-          <h4 className="px-6 text-[32px] leading-[44px] font-bold tracking-[1px] mb-[15px]">
+          <h4 className="px-6 text-[32px] leading-[44px] font-bold tracking-[1px] mb-[13px]">
             {now.toLocaleString('default', { month: 'short' })}
             {', '}
             {now.getFullYear()}
@@ -488,7 +488,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               </div>
             </div>
           )}
-          <div className="flex justify-end gap-x-[38px] px-[28px] mt-[11px]">
+          <div className="flex justify-end gap-x-[38px] px-[28px] mt-[12px]">
             <button className="confirm-btn" onClick={closeAndReset}>
               <span>Cancel</span>
             </button>

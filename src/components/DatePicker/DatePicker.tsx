@@ -439,7 +439,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
             </div>
           )}
           {selectionTab === 'year' && (
-            <div className="mb-[27px]">
+            <div className="mb-[26px]">
               <div className="nav">
                 <button
                   className="nav-btn"
@@ -449,7 +449,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                 >
                   <ArrowLeft />
                 </button>
-                <span className="-mt-[9px]">{selectedYear}</span>
+                <span className="-mt-[5px]">{selectedYear}</span>
                 <button
                   className="nav-btn"
                   onClick={(e) => {
@@ -465,7 +465,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                   <ArrowRight />
                 </button>
               </div>
-              <div className="px-[24px] grid grid-cols-[repeat(4,minmax(0,61px))] gap-x-[9px] gap-y-6 mt-[17px]">
+              <div className="px-[24px] grid grid-cols-[repeat(4,minmax(0,61px))] gap-x-[9px] gap-y-6 mt-[20px]">
                 {yearsArray.map((year, index) => {
                   const classNameSelected =
                     selectedYear === year ? 'bg-primary rounded-[2px]' : '';

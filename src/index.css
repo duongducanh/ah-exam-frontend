@@ -29,6 +29,6 @@
   }
 
   button {
-    @apply disabled:cursor-not-allowed;
+    @apply disabled:cursor-not-allowed disabled:opacity-[.2];
   }
 }

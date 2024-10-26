@@ -3,7 +3,7 @@
 }
 
 .nav-btn {
-  @apply w-[48px] h-[48px] flex justify-center items-center disabled:opacity-[.5];
+  @apply w-[48px] h-[48px] flex justify-center items-center;
 }
 
 .nav-year-btn {

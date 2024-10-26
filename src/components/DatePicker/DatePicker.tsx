@@ -303,6 +303,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
     setTriggerChange(true);
   };
 
+  const dateToDisplay = selectedDate ? selectedDate : now;
+
   return (
     <div className="relative">
       <div
@@ -330,9 +332,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
         >
           <div className="px-6 mb-1">Text</div>
           <h4 className="px-6 text-[32px] leading-[44px] font-bold tracking-[1px] mb-[13px]">
-            {now.toLocaleString('default', { month: 'short' })}
+            {dateToDisplay.toLocaleString('default', { month: 'short' })}
             {', '}
-            {now.getFullYear()}
+            {dateToDisplay.getFullYear()}
           </h4>
           {selectionTab === 'day' && (
             <div>

@@ -2,6 +2,8 @@
 
 The datepicker and password components by react/typescript.
 
+Demo: https://ahaai-frontend-exam-lucci.web.app/
+
 ## Usage
 
 ```js

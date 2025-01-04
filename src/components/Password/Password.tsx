@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import Input from '../Input';
 import PasswordCheckList from './PasswordCheckList';
-import useOutsideClick from '../../hooks/useOusideClick';
+import useOutsideClick from '../../hooks/useOutsideClick';
 
 const Password = () => {
   const [password, setPassword] = useState<string>('');

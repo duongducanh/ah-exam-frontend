@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import './datepicker.css';
 import { isValidDate } from '../../utils';
-import useOutsideClick from '../../hooks/useOusideClick';
+import useOutsideClick from '../../hooks/useOutsideClick';
 import Input from '../Input';
 import ArrowLeft from '../Icons/ArrowLeft';
 import ArrowRight from '../Icons/ArrowRight';
